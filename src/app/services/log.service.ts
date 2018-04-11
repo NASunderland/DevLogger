@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/observable';
+import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 
 import { Log } from '../models/log';
@@ -26,7 +26,16 @@ export class LogService {
   }
 
   getLogs(): Observable<Log[]> {
-    return of(this.logs);
+
+    if (localStorage.getItem('logs') === null) {
+      this.logs = [];
+    } else {
+      this.logs = JSON.parse(localStorage.getItem('logs'));
+    }
+
+    return of(this.logs.sort((a, b) => {
+      return b.date = a.date;
+    }));
   }
 
   setFormLog(log: Log) {
@@ -47,6 +56,8 @@ export class LogService {
     });
 
     this.logs.unshift(log);
+
+    localStorage.setItem('logs', JSON.stringify(this.logs));
   }
 
   deleteLog(log: Log) {
@@ -55,6 +66,9 @@ export class LogService {
         this.logs.splice(index, 1);
       }
     });
+    console.log(log.id);
+    console.log(this.logs);
+    localStorage.setItem('logs', JSON.stringify(this.logs));
   }
 
   clearState() {
