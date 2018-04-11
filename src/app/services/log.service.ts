@@ -35,6 +35,8 @@ export class LogService {
 
   addLog(log: Log) {
     this.logs.unshift(log);
+
+    localStorage.setItem('logs', JSON.stringify(this.logs));
   }
 
   updateLog(log: Log) {
